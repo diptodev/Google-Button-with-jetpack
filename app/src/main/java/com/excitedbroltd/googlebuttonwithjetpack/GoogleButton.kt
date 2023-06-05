@@ -1,8 +1,9 @@
 package com.excitedbroltd.googlebuttonwithjetpack
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -28,9 +29,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun GoogleButton(
-    name: String = "Sign up with google",
     image: Painter = painterResource(id = R.drawable.google_icon),
     onClicked: () -> Unit,
 
@@ -45,6 +46,9 @@ fun GoogleButton(
             },
         color = Color.LightGray
     ) {
+        var name by remember {
+            mutableStateOf("Sign up with google")
+        }
         Row(
             modifier = Modifier
                 .padding(
@@ -54,17 +58,20 @@ fun GoogleButton(
                     bottom = 12.dp
                 )
                 .animateContentSize(
-                    animationSpec = tween(
-                        durationMillis = 300,
-                        easing = LinearOutSlowInEasing
+                    animationSpec = spring(
+                        dampingRatio = 3f,
+                        stiffness = Spring.StiffnessHigh
                     )
                 ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
 
             ) {
+            name = if (isClicked) "Creating account..." else "Sign up with google"
 
             Text(text = name)
+
+
             Spacer(modifier = Modifier.width(4.dp))
             Icon(
                 painter = image,
@@ -81,7 +88,7 @@ fun GoogleButton(
                     strokeWidth = 2.dp
                 )
             }
-          //  onClicked()
+            onClicked()
         }
     }
 }
